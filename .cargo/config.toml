@@ -1,0 +1,5 @@
+[build]
+rustflags = ["-L", "/usr/lib/x86_64-linux-gnu", "-L", "/home/spencerkittleson/.local/lib"]
+
+[env]
+PKG_CONFIG_PATH = "/home/spencerkittleson/.local/share/flatpak/runtime/org.freedesktop.Sdk/x86_64/24.08/8389898f32f731fa4416a0c011ca77474148c5b0ad3061d1d9cf85fa1d02373f/files/lib/x86_64-linux-gnu/pkgconfig"

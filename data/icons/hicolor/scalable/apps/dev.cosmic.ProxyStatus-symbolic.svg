@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- Proxy status icon: a small server/node with a signal arc -->
+  <!-- Circle representing a network node -->
+  <circle cx="8" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <!-- Top signal arc (large) -->
+  <path d="M3.5 5.5 Q8 1 12.5 5.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Middle signal arc -->
+  <path d="M5.2 7.2 Q8 4.5 10.8 7.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Small dot at top center to indicate broadcast point -->
+  <circle cx="8" cy="2.5" r="0.8" fill="currentColor"/>
+</svg>
