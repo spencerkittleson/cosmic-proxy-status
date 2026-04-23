@@ -2,3 +2,9 @@
 *.swp
 *.swo
 .env
+
+# Flatpak build artifacts
+.flatpak-builder/
+build-dir/
+vendor/
+generated-sources.json

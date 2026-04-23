@@ -28,6 +28,42 @@ cargo build
 
 > **Note:** The `.cargo/config.toml` sets `PKG_CONFIG_PATH` and linker flags for `libxkbcommon` using the Flatpak SDK. If you have `libxkbcommon-dev` installed system-wide (`sudo apt install libxkbcommon-dev`) you can remove `.cargo/config.toml` and build normally.
 
+## Flatpak Build
+
+To build a Flatpak package, you need `flatpak-builder` and the Freedesktop SDK:
+
+```bash
+# Install flatpak-builder from Flathub
+flatpak install flathub org.flatpak.Builder
+
+# Install the Freedesktop SDK 24.08 (if not already installed)
+flatpak install flathub org.freedesktop.Sdk//24.08 org.freedesktop.Platform//24.08
+
+# Install the rust-stable extension
+flatpak install flathub org.freedesktop.Sdk.Extension.rust-stable//24.08
+
+# Generate the cargo vendor sources (run from the project root)
+flatpak-cargo-generator.py Cargo.lock > generated-sources.json
+# or use the generated-sources.json file that's already included
+
+# Build the Flatpak package
+flatpak-builder --force-clean build-dir flatpak-manifest.json
+```
+
+> **Note:** The `flatpak-manifest.json` includes all dependencies from `generated-sources.json`. If you have `libxkbcommon-dev` installed system-wide, the `.cargo/config.toml` can be removed.
+
+## Flatpak Install & Run
+
+```bash
+# Install the Flatpak package
+flatpak-builder --force-clean --user --install build-dir flatpak-manifest.json
+
+# Run the applet
+flatpak run dev.cosmic.ProxyStatus
+```
+
+> **Note:** For COSMIC panel applets, the applet must be added to the panel configuration. Edit `~/.config/cosmic/com.system76.CosmicPanel.Panel/v1/plugins_wings` and add `"dev.cosmic.ProxyStatus"` to the right-side array. Then restart the panel with `killall cosmic-panel`.
+
 ## Installing
 
 ```bash

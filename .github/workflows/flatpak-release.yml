@@ -1,0 +1,56 @@
+name: Flatpak Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  flatpak:
+    name: Build Flatpak bundle
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Flatpak SDK extensions
+        run: |
+          flatpak install -y --noninteractive flathub org.freedesktop.Sdk.Extension.rust-stable//25.08
+
+      - name: Generate Flatpak cargo sources
+        run: |
+          pip install flatpak-cargo-generator
+          flatpak-cargo-generator Cargo.lock -o generated-sources.json
+
+      - name: Update manifest commit to current HEAD
+        run: |
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          sed -i "s/\"commit\": \"e87ab69819e124354a12d2d184b05b5cdf043171\"/\"commit\": \"${CURRENT_COMMIT}\"/" flatpak-manifest.json
+
+      - name: Build Flatpak
+        uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
+        with:
+          manifest-path: flatpak-manifest.json
+          bundle: cosmic-proxy-status.flatpak
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak bundle to release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" cosmic-proxy-status.flatpak --clobber
+
+      - name: Upload Flatpak bundle as artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosmic-proxy-status-flatpak
+          path: cosmic-proxy-status.flatpak
